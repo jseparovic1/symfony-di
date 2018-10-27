@@ -21,15 +21,24 @@ $admin->addRole(User::ROLE_ADMIN);
 
 $post = new Post();
 
+/** Using setDefinition to create service definitions */
 //Creating definition for PostVoter and AccessManager classes;
-$postVoterDefinition = new Definition(PostVoter::class);
-$containerBuilder->setDefinition(PostVoter::class, $postVoterDefinition);
+//$postVoterDefinition = new Definition(PostVoter::class);
+//$containerBuilder->setDefinition(PostVoter::class, $postVoterDefinition);
+//
+//$accessManagerDefinition = new Definition(AccessManager::class);
+//$accessManagerDefinition->addArgument([new Reference(PostVoter::class)]);
+//$containerBuilder->setDefinition(AccessManager::class, $accessManagerDefinition);
 
-$accessManagerDefinition = new Definition(AccessManager::class);
-$accessManagerDefinition->addArgument([new Reference(PostVoter::class)]);
-$containerBuilder->setDefinition(AccessManager::class, $accessManagerDefinition);
+/** Using register method for definitions */
+$containerBuilder->register('post_voter', PostVoter::class);
 
-$accessManager = $containerBuilder->get(AccessManager::class);
+$containerBuilder
+    ->register('access_manager', AccessManager::class)
+    ->addArgument([new Reference('post_voter')]);
+;
+
+$accessManager = $containerBuilder->get('access_manager');
 
 if ($accessManager->decide(PostVoter::READ, $post, $admin)) {
     echo "Yea go ahead!";
