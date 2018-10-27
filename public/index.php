@@ -31,14 +31,21 @@ $post = new Post();
 //$containerBuilder->setDefinition(AccessManager::class, $accessManagerDefinition);
 
 /** Using register method for definitions */
-$containerBuilder->register('post_voter', PostVoter::class);
+$containerBuilder
+    ->register('post_voter', PostVoter::class)
+    ->setPublic(false)
+;
 
 $containerBuilder
     ->register('access_manager', AccessManager::class)
+    ->setPublic(true)
     ->addArgument([new Reference('post_voter')]);
 ;
 
+$containerBuilder->compile();
+
 $accessManager = $containerBuilder->get('access_manager');
+
 
 if ($accessManager->decide(PostVoter::READ, $post, $admin)) {
     echo "Yea go ahead!";
