@@ -1,0 +1,21 @@
+{
+    "name": "jseparovic/di",
+    "description": "Symfony dependecny injection playground",
+    "authors": [
+        {
+            "name": "Jurica Šeparović",
+            "email": "jsepar00@fesb.hr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/dependency-injection": "^4.1"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.1"
+    }
+}
