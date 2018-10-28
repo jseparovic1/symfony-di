@@ -1,54 +1,22 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 require __DIR__. '/../vendor/autoload.php';
 
+use App\Controller\PostController;
+use App\DependencyInjection\Compiler\VoterPass;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use App\Authorization\AccessManager;
-use App\Authorization\Voter\PostVoter;
-use App\Entity\Post;
-use App\Entity\User;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 $containerBuilder = new ContainerBuilder();
+$containerBuilder->addCompilerPass(new VoterPass());
 
-$user = new User("Jure");
-$admin = new User("Admin");
-
-$admin->addRole(User::ROLE_ADMIN);
-
-$post = new Post();
-
-/** Using setDefinition to create service definitions */
-//Creating definition for PostVoter and AccessManager classes;
-//$postVoterDefinition = new Definition(PostVoter::class);
-//$containerBuilder->setDefinition(PostVoter::class, $postVoterDefinition);
-//
-//$accessManagerDefinition = new Definition(AccessManager::class);
-//$accessManagerDefinition->addArgument([new Reference(PostVoter::class)]);
-//$containerBuilder->setDefinition(AccessManager::class, $accessManagerDefinition);
-
-/** Using register method for definitions */
-$containerBuilder
-    ->register('post_voter', PostVoter::class)
-    ->setPublic(false)
-;
-
-$containerBuilder
-    ->register('access_manager', AccessManager::class)
-    ->setPublic(true)
-    ->addArgument([new Reference('post_voter')]);
-;
+/**
+ * Register configuration
+ */
+$loader = new PhpFileLoader($containerBuilder, new FileLocator(__DIR__.'/../config'));
+$loader->load('config.php');
 
 $containerBuilder->compile();
 
-$accessManager = $containerBuilder->get('access_manager');
-
-
-if ($accessManager->decide(PostVoter::READ, $post, $admin)) {
-    echo "Yea go ahead!";
-} else {
-    echo "YOU SHALL NOT PASS!";
-}
+$containerBuilder->get(PostController::class)->index();
