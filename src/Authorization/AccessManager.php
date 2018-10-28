@@ -14,11 +14,6 @@ final class AccessManager
      */
     private $voters;
 
-    public function __construct(iterable $voters)
-    {
-        $this->voters = $voters;
-    }
-
     public function decide(string $attribute, $subject, User $user): bool
     {
         foreach ($this->voters as $voter) {
@@ -28,5 +23,10 @@ final class AccessManager
         }
 
         throw new \LogicException('No voter can handle this resource.');
+    }
+
+    public function addVoter(VoterInterface $voter)
+    {
+        $this->voters[] = $voter;
     }
 }
