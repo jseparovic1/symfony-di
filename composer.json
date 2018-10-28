@@ -14,7 +14,8 @@
     },
     "require": {
         "symfony/dependency-injection": "^4.1",
-        "symfony/config": "^4.1"
+        "symfony/config": "^4.1",
+        "monolog/monolog": "^1.23"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.1"
